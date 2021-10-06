@@ -34,8 +34,26 @@ public class Car {
 
     }
 
+    private Car(String name, int price, String category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
     public static Car of(String name, String category) {
         return new Car(name, category);
+    }
+
+    public static Car of(String name, int price, String category) {
+        return new Car(name, price, category);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Integer getPrice() {
+        return price;
     }
 
     public String getCategory() {
@@ -52,5 +70,9 @@ public class Car {
         } else {
             return "Family";
         }
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

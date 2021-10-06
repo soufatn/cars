@@ -44,13 +44,15 @@ public class CarsATest {
     protected CarRepository carRepository;
 
     private List<Car> listedCars;
+    private final List<Car> savedCars = new ArrayList<>();
 
     @Etantdonné("Les voitures suivantes")
     public void lesVoituresSuivantes(DataTable dataTable) {
         List<Car> cars = dataTableTransformEntries(dataTable, this::buildCar);
 
         for (Car car : cars) {
-            entityManager.persist(car);
+            var savedCar = entityManager.persist(car);
+            savedCars.add(savedCar);
         }
     }
 
@@ -60,7 +62,7 @@ public class CarsATest {
 
     @Quand("on liste les voitures")
     public void onListeLesVoitures() {
-        final CarService carService = new CarService(carRepository);
+        var carService = new CarService(carRepository);
         listedCars = carService.listAllCars();
     }
 
@@ -75,6 +77,9 @@ public class CarsATest {
     }
 
     private Car buildCarInfo(Map<String, String> entry) {
+        if (entry.containsKey("price")) {
+            return Car.of(entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
+        }
         return Car.of(entry.get("name"), entry.get("category"));
     }
 
@@ -85,5 +90,27 @@ public class CarsATest {
             transformResults.add(transformFunction.apply(mapEntry));
         });
         return transformResults;
+    }
+
+    @Quand("on met à jour le prix à {int}")
+    public void onMetÀJourLePrixÀ(int newPrice) {
+        final Integer carId = findFirstSavedCarId();
+        var carService = new CarService(carRepository);
+        carService.updatePrice(carId, newPrice);
+    }
+
+    @Alors("on récupère les informations suivantes de la base")
+    public void onRécupèreLesInformationsSuivantesDeLaBase(DataTable dataTable) {
+        List<Car> expectedCars = dataTableTransformEntries(dataTable, this::buildCarInfo);
+
+        final Integer carId = findFirstSavedCarId();
+        final Car car = carRepository.findById(carId).get();
+        assertThat(car.getName()).isEqualTo(expectedCars.get(0).getName());
+        assertThat(car.getPrice()).isEqualTo(expectedCars.get(0).getPrice());
+        assertThat(car.getCategory()).isEqualTo(expectedCars.get(0).getCategory());
+    }
+
+    private Integer findFirstSavedCarId() {
+        return savedCars.get(0).getId();
     }
 }

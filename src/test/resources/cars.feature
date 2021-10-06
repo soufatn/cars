@@ -11,3 +11,12 @@ Fonctionnalité: Lister les voitures
       | name   | category |
       | twingo | Small    |
       | espace | Family   |
+
+  Scénario: Mise à jour du prix
+    Etant donné Les voitures suivantes
+      | name   | price |
+      | twingo | 10000 |
+    Quand on met à jour le prix à 11000
+    Alors on récupère les informations suivantes de la base
+      | name   | price | category |
+      | twingo | 11000 | Small    |
