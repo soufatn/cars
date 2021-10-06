@@ -1,6 +1,7 @@
 package com.cars;
 
 import com.cars.model.Car;
+import com.cars.repository.CarRepository;
 import com.cars.service.CarService;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.fr.Alors;
@@ -22,6 +23,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+
 import io.cucumber.spring.CucumberContextConfiguration;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
@@ -37,7 +40,10 @@ public class CarsATest {
     @Autowired
     protected TestEntityManager entityManager;
 
-    private List<Car> cars;
+    @Autowired
+    protected CarRepository carRepository;
+
+    private List<Car> listedCars;
 
     @Etantdonné("Les voitures suivantes")
     public void lesVoituresSuivantes(DataTable dataTable) {
@@ -54,15 +60,18 @@ public class CarsATest {
 
     @Quand("on liste les voitures")
     public void onListeLesVoitures() {
-        final CarService carService = new CarService();
-        cars = carService.listAllCars();
+        final CarService carService = new CarService(carRepository);
+        listedCars = carService.listAllCars();
     }
 
     @Alors("on récupère les informations suivantes")
     public void onRécupèreLesInformationsSuivantes(DataTable dataTable) {
         List<Car> expectedCars = dataTableTransformEntries(dataTable, this::buildCarInfo);
 
-        assertThat(cars).isEqualTo(expectedCars);
+        assertThat(listedCars).extracting("name", "category").containsExactly(
+                tuple(expectedCars.get(0).getName(), expectedCars.get(0).getCategory()),
+                tuple(expectedCars.get(1).getName(), expectedCars.get(1).getCategory())
+        );
     }
 
     private Car buildCarInfo(Map<String, String> entry) {

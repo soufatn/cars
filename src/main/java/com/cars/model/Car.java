@@ -25,12 +25,12 @@ public class Car {
         this.category = initializeCategory();
     }
 
-    public Car(String name, String category) {
+    private Car(String name, String category) {
         this.name = name;
         this.category = category;
     }
 
-    public Car() {
+    private Car() {
 
     }
 
@@ -40,6 +40,10 @@ public class Car {
 
     public String getCategory() {
         return category;
+    }
+
+    public String getName() {
+        return name;
     }
 
     private String initializeCategory() {

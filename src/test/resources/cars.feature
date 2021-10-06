@@ -9,5 +9,5 @@ Fonctionnalité: Lister les voitures
     Quand on liste les voitures
     Alors on récupère les informations suivantes
       | name   | category |
-      | twingo | small    |
-      | espace | family   |
+      | twingo | Small    |
+      | espace | Family   |
