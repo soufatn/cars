@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.cars.model.Car.SMALL_CAR_MAX_PRICE;
+
 @Service
 public class CarService {
 
@@ -23,8 +25,10 @@ public class CarService {
     public void updatePrice(Integer carId, int newPrice) {
         final Optional<Car> optionalCar = carRepository.findById(carId);
         optionalCar.ifPresent(car -> {
-            car.setPrice(newPrice);
-            carRepository.save(car);
+            if (car.getCategory().equals("Small") && newPrice < SMALL_CAR_MAX_PRICE) {
+                car.setPrice(newPrice);
+                carRepository.save(car);
+            }
         });
     }
 }

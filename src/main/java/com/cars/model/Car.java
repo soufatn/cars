@@ -7,6 +7,7 @@ import javax.persistence.Id;
 
 @Entity
 public class Car {
+    public static final int SMALL_CAR_MAX_PRICE = 15000;
     @Id
     @GeneratedValue
     private Integer id;
@@ -65,7 +66,7 @@ public class Car {
     }
 
     private String initializeCategory() {
-        if (price < 15000) {
+        if (price < SMALL_CAR_MAX_PRICE) {
             return "Small";
         } else {
             return "Family";
