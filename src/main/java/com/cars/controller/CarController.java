@@ -1,12 +1,16 @@
 package com.cars.controller;
 
 import com.cars.dto.CarDto;
+import com.cars.dto.DuplicateCarDto;
+import com.cars.model.Car;
 import com.cars.repository.CarRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@RestController
+import java.util.Optional;
+
+@RestController()
 public class CarController {
 
     private final CarRepository carRepository;
@@ -20,5 +24,21 @@ public class CarController {
         return carRepository.findByName(name)
                 .map(car -> new CarDto(car.getName(), car.getCategory()))
                 .orElse(null);
+    }
+
+    @PostMapping("/api/car/{name}")
+    public ResponseEntity<Void> duplicate(@PathVariable("name") String name, @RequestBody DuplicateCarDto duplicateCarDto) {
+        final Optional<Car> optionalCar = carRepository.findByName(name);
+        optionalCar.ifPresent(car -> duplicateCar(car, duplicateCarDto));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    private void duplicateCar(Car originalCar, DuplicateCarDto duplicateCarDto) {
+        String category = originalCar.getCategory();
+        if (duplicateCarDto.newPrice() > originalCar.getPrice() && originalCar.getCategory().equals("Small")) {
+            category = "Medium";
+        }
+        final Car newCar = Car.of(duplicateCarDto.newName(), duplicateCarDto.newPrice(), category);
+        carRepository.save(newCar);
     }
 }
