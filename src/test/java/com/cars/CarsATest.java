@@ -83,7 +83,7 @@ public class CarsATest {
         return Car.of(entry.get("name"), entry.get("category"));
     }
 
-    private <T> List<T> dataTableTransformEntries(DataTable dataTable, Function<Map<String, String>, T> transformFunction) {
+    public static <T> List<T> dataTableTransformEntries(DataTable dataTable, Function<Map<String, String>, T> transformFunction) {
         final List<T> transformResults = new ArrayList<>();
         final List<Map<String, String>> dataTableEntries = dataTable.asMaps(String.class, String.class);
         dataTableEntries.forEach(mapEntry -> {
