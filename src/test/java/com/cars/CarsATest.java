@@ -52,7 +52,7 @@ public class CarsATest {
     }
 
     private Car buildCar(Map<String, String> entry) {
-        return new Car(entry.get("name"), Integer.parseInt(entry.get("price")));
+        return Car.of(entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
     }
 
     private Car buildCarInfo(Map<String, String> entry) {

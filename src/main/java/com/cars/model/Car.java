@@ -18,13 +18,8 @@ public class Car {
     @Column
     private Integer price;
 
+    @Column
     private String category;
-
-    public Car(String name, Integer price) {
-        this.name = name;
-        this.price = price;
-        this.category = initializeCategory();
-    }
 
     private Car(String name, String category) {
         this.name = name;
@@ -63,14 +58,6 @@ public class Car {
 
     public String getName() {
         return name;
-    }
-
-    private String initializeCategory() {
-        if (price < SMALL_CAR_MAX_PRICE) {
-            return "Small";
-        } else {
-            return "Family";
-        }
     }
 
     public void setPrice(Integer price) {
