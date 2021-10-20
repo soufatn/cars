@@ -6,9 +6,20 @@ Fonctionnalité: Dupliquer une voiture
       | id | name   | price |
       | 1  | twingo | 10000 |
     Quand on met à jour le prix à 11000 de la voiture (1)
-    Alors on récupère les informations suivantes de la base
+    Alors on reçoit un OK
+    Et on récupère les informations suivantes de la base
       | name   | price | category |
       | twingo | 11000 | Small    |
+
+  Scénario: Mise à jour du prix impossible à cause d'un changement de catégorie
+    Etant donné Les voitures suivantes
+      | name   | price |
+      | twingo | 10000 |
+    Quand on met à jour le prix à 50000 de la voiture (1)
+    Alors on reçoit un non modifié
+    Et on récupère les informations suivantes de la base
+      | name   | price | category |
+      | twingo | 10000 | Small    |
 
   Scénario: Dupliquer une voiture
     Etant donné Les voitures suivantes

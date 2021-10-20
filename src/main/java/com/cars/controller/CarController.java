@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static com.cars.model.Car.SMALL_CAR_MAX_PRICE;
 
 @RestController()
 public class CarController {
@@ -38,7 +41,7 @@ public class CarController {
     }
 
     @PostMapping("/api/car/{name}")
-    public ResponseEntity<Void> duplicate(@PathVariable("name") String name, @RequestBody DuplicateCarDto duplicateCarDto) {
+    public ResponseEntity<Void> updatePrice(@PathVariable("name") String name, @RequestBody DuplicateCarDto duplicateCarDto) {
         final Optional<Car> optionalCar = carRepository.findByName(name);
         optionalCar.ifPresent(car -> duplicateCar(car, duplicateCarDto));
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -54,12 +57,17 @@ public class CarController {
     }
 
     @PatchMapping("/api/car/{id}")
-    public ResponseEntity<Void> duplicate(@PathVariable("id") int id, @RequestBody UpdatedCarDto updatedCarDto) {
+    public ResponseEntity<Void> updatePrice(@PathVariable("id") int id, @RequestBody UpdatedCarDto updatedCarDto) {
         final Optional<Car> optionalCar = carRepository.findById(id);
+        AtomicReference<HttpStatus> result = new AtomicReference<>(HttpStatus.NO_CONTENT);
         optionalCar.ifPresent(car -> {
-            car.setPrice(updatedCarDto.newPrice());
-            carRepository.save(car);
+            if (car.getCategory().equals("Small") && updatedCarDto.newPrice() < SMALL_CAR_MAX_PRICE) {
+                car.setPrice(updatedCarDto.newPrice());
+                carRepository.save(car);
+            } else {
+                result.set(HttpStatus.NOT_MODIFIED);
+            }
         });
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(result.get());
     }
 }

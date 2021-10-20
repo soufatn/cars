@@ -8,10 +8,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -24,6 +26,7 @@ public class CarsCommandATest {
 
     @Autowired
     private CarRepository carRepository;
+    private ResultActions resultActions;
 
     @Quand("on duplique une {string} en {string} à {int}€")
     public void onDupliqueUneEnÀ€(String originalName, String newName, int newPrice) throws Exception {
@@ -41,12 +44,21 @@ public class CarsCommandATest {
     public void onMetÀJourLePrixÀDeLaVoiture(int newPrice, int id) throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new CarController(carRepository)).build();
 
-        mockMvc.perform(
-                        patch("/api/car/" + id)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(toJson(new UpdatedCarDto(newPrice)))
-                )
-                .andExpect(status().isNoContent());
+        resultActions = mockMvc.perform(
+                patch("/api/car/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(new UpdatedCarDto(newPrice)))
+        );
+    }
+
+    @Alors("on reçoit un OK")
+    public void onReçoitUnOK() throws Exception {
+        resultActions.andExpect(status().isNoContent());
+    }
+
+    @Alors("on reçoit un non modifié")
+    public void onReçoitUnNonModifié() throws Exception {
+        resultActions.andExpect(status().isNotModified());
     }
 
     private String toJson(Object object) throws JsonProcessingException {
