@@ -2,6 +2,7 @@ package com.cars.controller;
 
 import com.cars.dto.CarDto;
 import com.cars.dto.DuplicateCarDto;
+import com.cars.dto.UpdatedCarDto;
 import com.cars.model.Car;
 import com.cars.repository.CarRepository;
 import org.springframework.http.HttpStatus;
@@ -50,5 +51,15 @@ public class CarController {
         }
         final Car newCar = Car.of(duplicateCarDto.newName(), duplicateCarDto.newPrice(), category);
         carRepository.save(newCar);
+    }
+
+    @PatchMapping("/api/car/{id}")
+    public ResponseEntity<Void> duplicate(@PathVariable("id") int id, @RequestBody UpdatedCarDto updatedCarDto) {
+        final Optional<Car> optionalCar = carRepository.findById(id);
+        optionalCar.ifPresent(car -> {
+            car.setPrice(updatedCarDto.newPrice());
+            carRepository.save(car);
+        });
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
