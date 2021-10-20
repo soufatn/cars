@@ -32,7 +32,7 @@ public class CarsQueryATest {
     public void onAfficheUne(String name) throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new CarController(carRepository)).build();
 
-        resultActions = this.mockMvc.perform(get("/api/car/" + name)).andExpect(status().isOk());
+        resultActions = this.mockMvc.perform(get("/api/car/" + name));
     }
 
     @Alors("on récupère les informations suivantes du body")
@@ -40,6 +40,7 @@ public class CarsQueryATest {
         List<CarDto> expectedCarDtos = dataTableTransformEntries(dataTable, this::buildCarDto);
 
         resultActions
+                .andExpect(status().isOk())
                 .andExpect(content().string("{\"name\":\""+expectedCarDtos.get(0).name()+"\",\"category\":\""+expectedCarDtos.get(0).category()+"\"}"));
     }
 
