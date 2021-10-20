@@ -2,11 +2,10 @@ package com.cars;
 
 import com.cars.model.Car;
 import com.cars.repository.CarRepository;
-import com.cars.service.CarService;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Etantdonné;
-import io.cucumber.java.fr.Quand;
+import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,9 +22,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-
-import io.cucumber.spring.CucumberContextConfiguration;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 @Transactional
@@ -43,7 +39,6 @@ public class CarsATest {
     @Autowired
     protected CarRepository carRepository;
 
-    private List<Car> listedCars;
     private final List<Car> savedCars = new ArrayList<>();
 
     @Etantdonné("Les voitures suivantes")
@@ -60,22 +55,6 @@ public class CarsATest {
         return new Car(entry.get("name"), Integer.parseInt(entry.get("price")));
     }
 
-    @Quand("on liste les voitures")
-    public void onListeLesVoitures() {
-        var carService = new CarService(carRepository);
-        listedCars = carService.listAllCars();
-    }
-
-    @Alors("on récupère les informations suivantes")
-    public void onRécupèreLesInformationsSuivantes(DataTable dataTable) {
-        List<Car> expectedCars = dataTableTransformEntries(dataTable, this::buildCarInfo);
-
-        assertThat(listedCars).extracting("name", "category").containsExactly(
-                tuple(expectedCars.get(0).getName(), expectedCars.get(0).getCategory()),
-                tuple(expectedCars.get(1).getName(), expectedCars.get(1).getCategory())
-        );
-    }
-
     private Car buildCarInfo(Map<String, String> entry) {
         if (entry.containsKey("price")) {
             return Car.of(entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
@@ -90,13 +69,6 @@ public class CarsATest {
             transformResults.add(transformFunction.apply(mapEntry));
         });
         return transformResults;
-    }
-
-    @Quand("on met à jour le prix à {int}")
-    public void onMetÀJourLePrixÀ(int newPrice) {
-        final Integer carId = findFirstSavedCarId();
-        var carService = new CarService(carRepository);
-        carService.updatePrice(carId, newPrice);
     }
 
     @Alors("on récupère les informations suivantes de la base")

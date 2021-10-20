@@ -43,17 +43,15 @@ public class CarController {
     @PostMapping("/api/car/{name}")
     public ResponseEntity<Void> updatePrice(@PathVariable("name") String name, @RequestBody DuplicateCarDto duplicateCarDto) {
         final Optional<Car> optionalCar = carRepository.findByName(name);
-        optionalCar.ifPresent(car -> duplicateCar(car, duplicateCarDto));
+        optionalCar.ifPresent(car -> {
+            String category = car.getCategory();
+            if (duplicateCarDto.newPrice() > car.getPrice() && car.getCategory().equals("Small")) {
+                category = "Medium";
+            }
+            final Car newCar = Car.of(duplicateCarDto.newName(), duplicateCarDto.newPrice(), category);
+            carRepository.save(newCar);
+        });
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    private void duplicateCar(Car originalCar, DuplicateCarDto duplicateCarDto) {
-        String category = originalCar.getCategory();
-        if (duplicateCarDto.newPrice() > originalCar.getPrice() && originalCar.getCategory().equals("Small")) {
-            category = "Medium";
-        }
-        final Car newCar = Car.of(duplicateCarDto.newName(), duplicateCarDto.newPrice(), category);
-        carRepository.save(newCar);
     }
 
     @PatchMapping("/api/car/{id}")

@@ -1,7 +1,7 @@
 # language: fr
 Fonctionnalité: Lister les voitures
 
-  Scénario: Afficher une voiture par nom
+  Scénario: Afficher toutes les voitures
     Etant donné Les voitures suivantes
       | name   | price |
       | twingo | 10000 |
