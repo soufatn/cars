@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.cars.CarsATest.dataTableTransformEntries;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,5 +47,27 @@ public class CarsQueryATest {
 
     private CarDto buildCarDto(Map<String, String> entry) {
         return new CarDto(entry.get("name"), entry.get("category"));
+    }
+
+    @Quand("on affiche toutes les voitures")
+    public void onAfficheToutesLesVoitures() throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(new CarController(carRepository)).build();
+
+        resultActions = this.mockMvc.perform(get("/api/car/")).andExpect(status().isOk());
+
+    }
+
+    @Alors("on récupère les voitures suivantes du body")
+    public void onRécupèreLesVoituresSuivantesDuBody(DataTable dataTable) throws Exception {
+        List<CarDto> expectedCarDtos = dataTableTransformEntries(dataTable, this::buildCarDto);
+
+        String jsonArrayOfCars = expectedCarDtos.stream()
+                .map(carDto -> "{\"name\":\"" + carDto.name() + "\",\"category\":\"" + carDto.category() + "\"}")
+                .collect(Collectors.joining(","));
+        jsonArrayOfCars = "[" + jsonArrayOfCars + "]";
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().string(jsonArrayOfCars));
     }
 }

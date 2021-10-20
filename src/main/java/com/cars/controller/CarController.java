@@ -8,7 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController()
 public class CarController {
@@ -17,6 +20,13 @@ public class CarController {
 
     public CarController(CarRepository carRepository) {
         this.carRepository = carRepository;
+    }
+
+    @GetMapping("/api/car/")
+    public List<CarDto> findAll() {
+        return StreamSupport.stream(carRepository.findAll().spliterator(), false)
+                .map(car -> new CarDto(car.getName(), car.getCategory()))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/api/car/{name}")
