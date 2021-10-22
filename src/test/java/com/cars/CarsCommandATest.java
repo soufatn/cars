@@ -1,6 +1,7 @@
 package com.cars;
 
 import com.cars.controller.CarController;
+import com.cars.dto.CreateCarDto;
 import com.cars.dto.DuplicateCarDto;
 import com.cars.dto.UpdatedCarDto;
 import com.cars.repository.CarRepository;
@@ -28,16 +29,29 @@ public class CarsCommandATest {
     private CarRepository carRepository;
     private ResultActions resultActions;
 
+    @Quand("on crée une nouvelle voiture {string} à {int}€")
+    public void onCréeUneNouvelleVoitureÀ€(String name, int price) throws Exception {
+        resultActions = mockMvc.perform(
+                post("/api/car/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(new CreateCarDto(name, price)))
+        );
+    }
+
+    @Alors("on reçoit un Created")
+    public void onReçoitUnCreated() throws Exception {
+        resultActions.andExpect(status().isCreated());
+    }
+
     @Quand("on duplique une {string} en {string} à {int}€")
     public void onDupliqueUneEnÀ€(String originalName, String newName, int newPrice) throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new CarController(carRepository)).build();
 
-        mockMvc.perform(
+        resultActions = mockMvc.perform(
                 post("/api/car/" + originalName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(toJson(new DuplicateCarDto(newName, newPrice)))
-                )
-                .andExpect(status().isCreated());
+                );
     }
 
     @Quand("on met à jour le prix à {int} de la voiture \\({int})")

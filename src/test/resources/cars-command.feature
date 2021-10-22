@@ -1,5 +1,26 @@
 # language: fr
-Fonctionnalité: Dupliquer une voiture
+Fonctionnalité: Commandes concernant les voitures
+
+  Scénario: Création d'une voiture de type Small
+    Quand on crée une nouvelle voiture "twingo" à 10000€
+    Alors on reçoit un Created
+    Et on récupère les informations suivantes de la base
+      | name   | price | category |
+      | twingo | 10000 | Small    |
+
+  Scénario: Création d'une voiture de type Medium
+    Quand on crée une nouvelle voiture "megane" à 25000€
+    Alors on reçoit un Created
+    Et on récupère les informations suivantes de la base
+      | name   | price | category |
+      | megane | 25000 | Medium   |
+
+  Scénario: Création d'une voiture de type Family
+    Quand on crée une nouvelle voiture "megane" à 55000€
+    Alors on reçoit un Created
+    Et on récupère les informations suivantes de la base
+      | name   | price | category |
+      | megane | 55000 | Family   |
 
   Scénario: Mise à jour du prix
     Etant donné Les voitures suivantes
@@ -27,7 +48,8 @@ Fonctionnalité: Dupliquer une voiture
       | twingo | 10000 | Small    |
       | espace | 55000 | Family   |
     Quand on duplique une "twingo" en "megane" à 25000€
-    Alors on récupère les informations suivantes de la base
+    Alors on reçoit un Created
+    Et on récupère les informations suivantes de la base
       | name   | price | category |
       | twingo | 10000 | Small    |
       | megane | 25000 | Medium   |
