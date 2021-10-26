@@ -16,11 +16,11 @@ Fonctionnalité: Commandes concernant les voitures
       | megane | 25000 | Medium   |
 
   Scénario: Création d'une voiture de type Family
-    Quand on crée une nouvelle voiture "megane" à 55000€
+    Quand on crée une nouvelle voiture "espace" à 55000€
     Alors on reçoit un Created
     Et on récupère les informations suivantes de la base
       | name   | price | category |
-      | megane | 55000 | Family   |
+      | espace | 55000 | Family   |
 
   Scénario: Mise à jour du prix
     Etant donné Les voitures suivantes

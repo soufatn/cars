@@ -31,6 +31,7 @@ public class CarsCommandATest {
 
     @Quand("on crée une nouvelle voiture {string} à {int}€")
     public void onCréeUneNouvelleVoitureÀ€(String name, int price) throws Exception {
+        mockMvc = MockMvcBuilders.standaloneSetup(new CarController(carRepository)).build();
         resultActions = mockMvc.perform(
                 post("/api/car/")
                         .contentType(MediaType.APPLICATION_JSON)
