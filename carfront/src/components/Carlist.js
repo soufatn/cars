@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {API_URL} from '../constants.js'
+import {API_URL} from '../constants.js';
+import AddCar from './AddCar';
 
 class Carlist extends Component {
 
@@ -9,6 +10,10 @@ class Carlist extends Component {
     }
 
     componentDidMount() {
+        this.fetchCars();
+    }
+
+    fetchCars = () => {
         fetch(API_URL + '/cars')
         .then((response) => response.json())
         .then((responseData) => {
@@ -17,6 +22,19 @@ class Carlist extends Component {
             });
         })
         .catch(err => console.error(err));
+    }
+
+    // Add new car
+    addCar(car) {
+        fetch(API_URL + '/cars', 
+        { method: 'POST', 
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(car)
+        })
+        .then(res => this.fetchCars())
+        .catch(err => console.error(err))
     }
 
     render() {
@@ -29,6 +47,7 @@ class Carlist extends Component {
         
         return (
             <div className="App">
+                <AddCar addCar={this.addCar} fetchCars={this.fetchCars} />
                 <table>
                     <tbody>{tableRows}</tbody>
                 </table>
