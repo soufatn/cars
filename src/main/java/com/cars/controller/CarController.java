@@ -78,4 +78,10 @@ public class CarController {
         carService.create(createCarDto.name(), createCarDto.price());
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/api/car/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") int id) {
+        carService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -49,4 +49,25 @@ class CarControllerUTest {
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         }
     }
+
+    @Nested
+    class DeleteShould {
+        @Test
+        void call_carService_delete() {
+            // when
+            carController.deleteById(1);
+
+            // then
+            verify(carService).delete(1);
+        }
+
+        @Test
+        void return_created_as_http_status() {
+            // when
+            var response = carController.deleteById(1);
+
+            // then
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        }
+    }
 }

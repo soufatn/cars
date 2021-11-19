@@ -66,4 +66,16 @@ class CarServiceUTest {
             assertThat(savedCar.getCategory()).isEqualTo("Family");
         }
     }
+
+    @Nested
+    class DeleteShould {
+        @Test
+        void delete_a_car_by_id() {
+            // when
+            carService.delete(1);
+
+            // then
+            verify(carRepository).deleteById(1);
+        }
+    }
 }

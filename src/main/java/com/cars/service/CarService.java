@@ -24,4 +24,8 @@ public class CarService {
         }
         carRepository.save(Car.of(name, price, category));
     }
+
+    public void delete(int id) {
+        carRepository.deleteById(id);
+    }
 }
