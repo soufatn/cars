@@ -20,6 +20,7 @@ import java.util.stream.StreamSupport;
 import static com.cars.model.Car.SMALL_CAR_MAX_PRICE;
 
 @RestController()
+@CrossOrigin()
 public class CarController {
 
     private final CarRepository carRepository;

@@ -14,7 +14,7 @@ class Carlist extends Component {
     }
 
     fetchCars = () => {
-        fetch(API_URL + '/cars')
+        fetch(API_URL + '/car/')
         .then((response) => response.json())
         .then((responseData) => {
             this.setState({
@@ -26,7 +26,7 @@ class Carlist extends Component {
 
     // Add new car
     addCar(car) {
-        fetch(API_URL + '/cars', 
+        fetch(API_URL + '/car/',
         { method: 'POST', 
             headers: {
             'Content-Type': 'application/json',
