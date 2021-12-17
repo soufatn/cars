@@ -45,11 +45,11 @@ public class CarsQueryATest {
 
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"name\":\""+expectedCarDtos.get(0).name()+"\",\"category\":\""+expectedCarDtos.get(0).category()+"\"}"));
+                .andExpect(content().string("{\"id\":"+expectedCarDtos.get(0).id()+",\"name\":\""+expectedCarDtos.get(0).name()+"\",\"category\":\""+expectedCarDtos.get(0).category()+"\"}"));
     }
 
     private CarDto buildCarDto(Map<String, String> entry) {
-        return new CarDto(entry.get("name"), entry.get("category"));
+        return new CarDto(Integer.parseInt(entry.get("id")), entry.get("name"), entry.get("category"));
     }
 
     @Quand("on affiche toutes les voitures")
@@ -65,7 +65,7 @@ public class CarsQueryATest {
         List<CarDto> expectedCarDtos = dataTableTransformEntries(dataTable, this::buildCarDto);
 
         String jsonArrayOfCars = expectedCarDtos.stream()
-                .map(carDto -> "{\"name\":\"" + carDto.name() + "\",\"category\":\"" + carDto.category() + "\"}")
+                .map(carDto -> "{\"id\":" + carDto.id() + ",\"name\":\"" + carDto.name() + "\",\"category\":\"" + carDto.category() + "\"}")
                 .collect(Collectors.joining(","));
         jsonArrayOfCars = "[" + jsonArrayOfCars + "]";
 

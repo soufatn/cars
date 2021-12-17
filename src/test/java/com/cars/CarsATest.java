@@ -52,7 +52,7 @@ public class CarsATest {
     }
 
     private Car buildCar(Map<String, String> entry) {
-        return Car.of(entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
+        return Car.of(Integer.parseInt(entry.get("id")), entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
     }
 
     private Car buildCarInfo(Map<String, String> entry) {
@@ -82,7 +82,4 @@ public class CarsATest {
         assertThat(car.getCategory()).isEqualTo(expectedCars.get(0).getCategory());
     }
 
-    private Integer findFirstSavedCarId() {
-        return savedCars.get(0).getId();
-    }
 }

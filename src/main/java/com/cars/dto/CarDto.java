@@ -1,4 +1,4 @@
 package com.cars.dto;
 
-public record CarDto(String name, String category) {
+public record CarDto(int id, String name, String category) {
 }

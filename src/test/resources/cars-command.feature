@@ -34,8 +34,8 @@ Fonctionnalité: Commandes concernant les voitures
 
   Scénario: Mise à jour du prix impossible à cause d'un changement de catégorie
     Etant donné Les voitures suivantes
-      | name   | price | category |
-      | twingo | 10000 | Small    |
+      | id | name   | price | category |
+      | 1  | twingo | 10000 | Small    |
     Quand on met à jour le prix à 50000 de la voiture (1)
     Alors on reçoit un non modifié
     Et on récupère les informations suivantes de la base
@@ -44,12 +44,13 @@ Fonctionnalité: Commandes concernant les voitures
 
   Scénario: Dupliquer une voiture
     Etant donné Les voitures suivantes
-      | name   | price | category |
-      | twingo | 10000 | Small    |
-      | espace | 55000 | Family   |
+      | id | name   | price | category |
+      | 1  | twingo | 10000 | Small    |
+      | 2  | espace | 55000 | Family   |
     Quand on duplique une "twingo" en "megane" à 25000€
     Alors on reçoit un Created
     Et on récupère les informations suivantes de la base
-      | name   | price | category |
-      | twingo | 10000 | Small    |
-      | megane | 25000 | Medium   |
+      | id | name   | price | category |
+      | 3  | megane | 25000 | Medium   |
+      | 1  | twingo | 10000 | Small    |
+      | 2  | espace | 55000 | Family   |

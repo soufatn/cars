@@ -34,14 +34,14 @@ public class CarController {
     @GetMapping("/api/car/")
     public List<CarDto> findAll() {
         return StreamSupport.stream(carRepository.findAll().spliterator(), false)
-                .map(car -> new CarDto(car.getName(), car.getCategory()))
+                .map(car -> new CarDto(car.getId(), car.getName(), car.getCategory()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/api/car/{name}")
     public CarDto findByName(@PathVariable("name") String name) {
         return carRepository.findByName(name)
-                .map(car -> new CarDto(car.getName(), car.getCategory()))
+                .map(car -> new CarDto(car.getId(), car.getName(), car.getCategory()))
                 .orElse(null);
     }
 
