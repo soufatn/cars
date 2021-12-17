@@ -1,31 +1,23 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import {API_URL} from '../constants.js';
 import AddCar from './AddCar';
 
-class Carlist extends Component {
+const Carlist = (props) => {
 
-    constructor(props) {
-        super(props);
-        this.state = { cars: [] };
-    }
+    const [cars, setCars] = useState([]);
 
-    componentDidMount() {
-        this.fetchCars();
-    }
+    const fetchCars = async () => {
+      const result = await fetch(API_URL + '/car/');
+      const cars = await result.json();
+      setCars(cars);
+    };
 
-    fetchCars = () => {
-        fetch(API_URL + '/car/')
-        .then((response) => response.json())
-        .then((responseData) => {
-            this.setState({
-                cars: responseData,
-            });
-        })
-        .catch(err => console.error(err));
-    }
+    useEffect(() => {
+        fetchCars();
+    }, []);
 
     // Add new car
-    addCar(car) {
+    const addCar = (car) => {
         fetch(API_URL + '/car/',
         { method: 'POST', 
             headers: {
@@ -33,27 +25,25 @@ class Carlist extends Component {
             },
             body: JSON.stringify(car)
         })
-        .then(res => this.fetchCars())
+        .then(res => fetchCars())
         .catch(err => console.error(err))
-    }
+    };
 
-    render() {
-        const tableRows = this.state.cars.map((car, index) =>
-            <tr key={index}>
-                <td>{car.name}</td>
-                <td>{car.category}</td>
-            </tr>
-        );
-        
-        return (
-            <div className="App">
-                <AddCar addCar={this.addCar} fetchCars={this.fetchCars} />
-                <table>
-                    <tbody>{tableRows}</tbody>
-                </table>
-            </div>
-        );
-    }
+    return (
+        <div className="App">
+            <AddCar addCar={addCar} fetchCars={fetchCars} />
+            <table>
+                <tbody>
+                {cars.map((car, index) => (
+                    <tr key={index}>
+                        <td>{car.name}</td>
+                        <td>{car.category}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        </div>
+    );
 }
 
 export default Carlist;
