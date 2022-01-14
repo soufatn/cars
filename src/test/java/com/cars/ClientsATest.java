@@ -38,7 +38,7 @@ public class ClientsATest {
 
     @Quand("on crée un nouveau client avec un email {string}")
     public void onCréeUnNouveauClientAvecUnEmail(String email) throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ClientController(clientRepository, clientService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ClientController(clientService)).build();
         resultActions = mockMvc.perform(
                 post("/api/client/")
                         .contentType(MediaType.APPLICATION_JSON)
