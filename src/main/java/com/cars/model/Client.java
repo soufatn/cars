@@ -31,6 +31,10 @@ public class Client {
         return new Client(email);
     }
 
+    public static Client of(int id, String email) {
+        return new Client(id, email);
+    }
+
     public Integer getId() {
         return id;
     }

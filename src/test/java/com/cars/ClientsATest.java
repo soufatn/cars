@@ -40,12 +40,13 @@ public class ClientsATest {
     public void onRécupèreLesInformationsSuivantesDeLaBaseClient(DataTable dataTable) {
         List<Client> expectedClients = dataTableTransformEntries(dataTable, this::buildClient);
 
-        final Integer clientId = clientRepository.findAll().iterator().next().getId();
-        final Client client = clientRepository.findById(clientId).get();
-        assertThat(client.getEmail()).isEqualTo(expectedClients.get(0).getEmail());
+        assertThat(expectedClients).usingFieldByFieldElementComparator().containsExactly(clientRepository.findAll().stream().toArray(Client[]::new));
     }
 
     private Client buildClient(Map<String, String> entry) {
-        return Client.of(entry.get("email"));
+        if (entry.get("id") == null) {
+            return Client.of(entry.get("email"));
+        }
+        return Client.of(Integer.parseInt(entry.get("id")), entry.get("email"));
     }
 }

@@ -44,9 +44,9 @@ public class ClientsCommandATest {
         mockMvc = MockMvcBuilders.standaloneSetup(new ClientController(clientRepository, clientService)).build();
 
         resultActions = mockMvc.perform(
-                post("/api/client/" + originalEmail)
+                post("/api/client/duplicate")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(new DuplicateClientDto(newEmail)))
+                        .content(toJson(new DuplicateClientDto(originalEmail, newEmail)))
         );
     }
 
@@ -60,5 +60,10 @@ public class ClientsCommandATest {
         objectMobjectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = objectMobjectMapper.writer().withDefaultPrettyPrinter();
         return ow.writeValueAsString(object);
+    }
+
+    @Alors("on reçoit un BadRequest pour le client")
+    public void onReçoitUnBadRequestPourLeClient() throws Exception {
+        resultActions.andExpect(status().isBadRequest());
     }
 }
