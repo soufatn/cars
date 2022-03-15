@@ -43,7 +43,7 @@ public class CarsATest {
 
     @Etantdonné("Les voitures suivantes")
     public void lesVoituresSuivantes(DataTable dataTable) {
-        List<Car> cars = dataTableTransformEntries(dataTable, this::buildCar);
+        List<Car> cars = dataTableTransformEntries(dataTable, CarsATest::buildCar);
 
         for (Car car : cars) {
             var savedCar = entityManager.persist(car);
@@ -51,7 +51,7 @@ public class CarsATest {
         }
     }
 
-    private Car buildCar(Map<String, String> entry) {
+    static Car buildCar(Map<String, String> entry) {
         return Car.of(Integer.parseInt(entry.get("id")), entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
     }
 

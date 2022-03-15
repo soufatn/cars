@@ -28,7 +28,7 @@ public class ClientsATest {
 
     @Etantdonné("Les clients suivants")
     public void lesClientsSuivants(DataTable dataTable) {
-        List<Client> clients = dataTableTransformEntries(dataTable, this::buildClient);
+        List<Client> clients = dataTableTransformEntries(dataTable, ClientsATest::buildClient);
 
         for (Client client : clients) {
             var savedClient = entityManager.persist(client);
@@ -38,12 +38,12 @@ public class ClientsATest {
 
     @Et("on récupère les informations suivantes de la base client")
     public void onRécupèreLesInformationsSuivantesDeLaBaseClient(DataTable dataTable) {
-        List<Client> expectedClients = dataTableTransformEntries(dataTable, this::buildClient);
+        List<Client> expectedClients = dataTableTransformEntries(dataTable, ClientsATest::buildClient);
 
         assertThat(expectedClients).usingFieldByFieldElementComparator().containsExactly(clientRepository.findAll().stream().toArray(Client[]::new));
     }
 
-    private Client buildClient(Map<String, String> entry) {
+    static Client buildClient(Map<String, String> entry) {
         if (entry.get("id") == null) {
             return Client.of(entry.get("email"));
         }

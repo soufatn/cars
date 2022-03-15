@@ -79,7 +79,7 @@ public class CarsCommandATest {
         resultActions.andExpect(status().isNotModified());
     }
 
-    private String toJson(Object object) throws JsonProcessingException {
+    static String toJson(Object object) throws JsonProcessingException {
         ObjectMapper objectMobjectMapper = new ObjectMapper();
         objectMobjectMapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = objectMobjectMapper.writer().withDefaultPrettyPrinter();
