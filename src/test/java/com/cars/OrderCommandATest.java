@@ -14,6 +14,7 @@ import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;
 import io.cucumber.java.fr.Quand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.http.MediaType;
@@ -22,10 +23,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import static com.cars.CarsATest.dataTableTransformEntries;
 import static com.cars.CarsCommandATest.toJson;
@@ -33,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 @Transactional
 @AutoConfigureTestEntityManager
 public class OrderCommandATest {
@@ -67,13 +67,13 @@ public class OrderCommandATest {
         }
     }
 
-    @Quand("on crée une nouvelle commande")
-    public void onCréeUneNouvelleCommande() throws Exception {
+    @Quand("on crée une nouvelle commande avec email {string}, idCar {int} et price {int}€")
+    public void onCréeUneNouvelleCommande(String email, int carId, int price) throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new OrderController(orderService)).build();
         resultActions = mockMvc.perform(
                 post("/api/order/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(new CreateOrderDto()))
+                        .content(toJson(new CreateOrderDto(email, carId, price)))
         );
     }
 
@@ -85,8 +85,12 @@ public class OrderCommandATest {
     @Et("on récupère les informations suivantes de la base commande")
     public void onRécupèreLesInformationsSuivantesDeLaBaseCommande(DataTable dataTable) {
         List<Order> expectedOrders = dataTableTransformEntries(dataTable, this::buildOrder);
+        final Integer orderId = orderRepository.findAll().iterator().next().getId();
+        final Order order = orderRepository.findById(orderId).get();
 
-        assertThat(expectedOrders).usingFieldByFieldElementComparator().containsExactly(orderRepository.findAll().stream().toArray(Order[]::new));
+        assertThat(order.getEmail()).isEqualTo(expectedOrders.get(0).getEmail());
+        assertThat(order.getPrice()).isEqualTo(expectedOrders.get(0).getPrice());
+        assertThat(order.getCar()).isEqualTo(expectedOrders.get(0).getCar());
     }
 
     private Order buildOrder(Map<String, String> entry) {
