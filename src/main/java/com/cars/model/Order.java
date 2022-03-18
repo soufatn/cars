@@ -57,4 +57,10 @@ public class Order {
     public Integer getPrice() {
         return price;
     }
+
+    public boolean isSame(Order order) {
+        return this.getCar().getId().equals(order.getCar().getId()) &&
+                this.getEmail().equals(order.getEmail()) &&
+                this.getPrice().equals(order.getPrice());
+    }
 }

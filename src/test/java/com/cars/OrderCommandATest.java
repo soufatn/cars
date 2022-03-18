@@ -85,16 +85,26 @@ public class OrderCommandATest {
     @Et("on récupère les informations suivantes de la base commande")
     public void onRécupèreLesInformationsSuivantesDeLaBaseCommande(DataTable dataTable) {
         List<Order> expectedOrders = dataTableTransformEntries(dataTable, this::buildOrder);
-        final Integer orderId = orderRepository.findAll().iterator().next().getId();
-        final Order order = orderRepository.findById(orderId).get();
-
-        assertThat(order.getEmail()).isEqualTo(expectedOrders.get(0).getEmail());
-        assertThat(order.getPrice()).isEqualTo(expectedOrders.get(0).getPrice());
-        assertThat(order.getCar()).isEqualTo(expectedOrders.get(0).getCar());
+        for (Order expectedOrder: expectedOrders) {
+            var isFound = orderRepository.findAll().stream().anyMatch(order -> order.isSame(expectedOrder));
+            assertThat(isFound).isTrue();
+        }
     }
 
     private Order buildOrder(Map<String, String> entry) {
         Car car = carRepository.findById(Integer.parseInt(entry.get("idVoiture"))).orElse(null);
+        if (entry.get("id") == null) {
+            return Order.of(entry.get("email"), car, Integer.parseInt(entry.get("price")));
+        }
         return Order.of(Integer.parseInt(entry.get("id")), entry.get("email"), car, Integer.parseInt(entry.get("price")));
+    }
+
+    @Et("les commandes suivantes:")
+    public void lesCommandesSuivantes(DataTable dataTable) {
+        List<Order> existingOrders = dataTableTransformEntries(dataTable, this::buildOrder);
+
+        for (Order order : existingOrders) {
+            entityManager.persist(order);
+        }
     }
 }
