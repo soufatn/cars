@@ -67,13 +67,13 @@ public class OrderCommandATest {
         }
     }
 
-    @Quand("on crée une nouvelle commande avec email {string}, idCar {int} et price {int}€")
-    public void onCréeUneNouvelleCommande(String email, int carId, int price) throws Exception {
+    @Quand("on crée une nouvelle commande avec email {string} et idCar {int}")
+    public void onCréeUneNouvelleCommande(String email, int carId) throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new OrderController(orderService)).build();
         resultActions = mockMvc.perform(
                 post("/api/order/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(new CreateOrderDto(email, carId, price)))
+                        .content(toJson(new CreateOrderDto(email, carId)))
         );
     }
 

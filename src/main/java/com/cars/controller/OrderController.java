@@ -18,7 +18,7 @@ public class OrderController {
 
     @PostMapping("/api/order/")
     public ResponseEntity<Void> create(@RequestBody CreateOrderDto createOrderDto) {
-        Boolean isCreated = orderService.create(createOrderDto.email(), createOrderDto.carId(), createOrderDto.price());
+        Boolean isCreated = orderService.create(createOrderDto.email(), createOrderDto.carId());
         if (isCreated) {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
