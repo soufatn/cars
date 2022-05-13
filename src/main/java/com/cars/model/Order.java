@@ -1,6 +1,8 @@
 package com.cars.model;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 
 @Entity(name = "carOrder")
 public class Order {
@@ -18,6 +20,9 @@ public class Order {
     @Column
     private Integer price;
 
+    @Column
+    private LocalDate orderDate;
+
     public Order() {
     }
 
@@ -34,8 +39,19 @@ public class Order {
         this.price = price;
     }
 
+    public Order(String email, Car car, int price, LocalDate orderDate) {
+        this.email = email;
+        this.car = car;
+        this.price = price;
+        this.orderDate = orderDate;
+    }
+
     public static Order of(int id, String email, Car car, int price) {
         return new Order(id, email, car, price);
+    }
+
+    public static Order of(String email, Car car, int price, LocalDate orderDate) {
+        return new Order(email, car, price, orderDate);
     }
 
     public static Order of(String email, Car car, int price) {
@@ -62,5 +78,9 @@ public class Order {
         return this.getCar().getId().equals(order.getCar().getId()) &&
                 this.getEmail().equals(order.getEmail()) &&
                 this.getPrice().equals(order.getPrice());
+    }
+
+    public LocalDate getOrderDate() {
+        return orderDate;
     }
 }

@@ -17,8 +17,6 @@ import java.util.Map;
 import static com.cars.CarsATest.dataTableTransformEntries;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
-@AutoConfigureTestEntityManager
 public class ClientsATest {
     private final List<Client> savedClients = new ArrayList<>();
     @Autowired
