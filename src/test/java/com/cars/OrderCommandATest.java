@@ -13,41 +13,34 @@ import io.cucumber.java.fr.Alors;
 import io.cucumber.java.fr.Et;
 import io.cucumber.java.fr.Etantdonné;
 import io.cucumber.java.fr.Quand;
-import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static com.cars.CarsATest.dataTableTransformEntries;
 import static com.cars.CarsCommandATest.toJson;
-import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
+@Transactional
+@AutoConfigureTestEntityManager
 public class OrderCommandATest {
+    @Autowired
+    protected TestEntityManager entityManager;
     private MockMvc mockMvc;
-
     private ResultActions resultActions;
     @Autowired
     private OrderService orderService;
@@ -55,22 +48,8 @@ public class OrderCommandATest {
     private CarRepository carRepository;
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private Clock clock;
-
-    @Configuration
-    public class ClockTestConfiguration {
-        @Bean
-        @Primary
-        public Clock clock() {
-            final LocalDateTime NOW = LocalDateTime.of(2012, 5, 13, 0, 0, 0);
-            return Clock.fixed(NOW.toInstant(UTC), UTC);
-        }
-    }
-
-    @Autowired
-    protected TestEntityManager entityManager;
 
     @Etantdonné("Les clients suivants:")
     public void lesClientsSuivants(DataTable dataTable) {
@@ -100,17 +79,6 @@ public class OrderCommandATest {
         );
     }
 
-
-    @Quand("on crée une nouvelle commande avec email {string} et idCar {int}")
-    public void onCréeUneNouvelleCommandeAvecEmailIdCarEtOrderDate(String email, int carId) throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(new OrderController(orderService)).build();
-        resultActions = mockMvc.perform(
-                post("/api/order/")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(toJson(new CreateOrderDto(email, carId)))
-        );
-    }
-
     @Alors("on reçoit un Created pour la commande")
     public void onReçoitUnCreatedPourLaCommande() throws Exception {
         resultActions.andExpect(status().isCreated());
@@ -129,13 +97,12 @@ public class OrderCommandATest {
         Car car = carRepository.findById(Integer.parseInt(entry.get("idVoiture"))).orElse(null);
         if (entry.get("id") == null) {
             try {
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                return Order.of(entry.get("email"), car, Integer.parseInt(entry.get("price")), LocalDate.parse(entry.get("orderDate")));
+                return Order.of(entry.get("email"), car, Integer.parseInt(entry.get("price")), LocalDate.now(clock));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return Order.of(Integer.parseInt(entry.get("id")), entry.get("email"), car, Integer.parseInt(entry.get("price")));
+        return Order.of(Integer.parseInt(entry.get("id")), entry.get("email"), car, Integer.parseInt(entry.get("price")), LocalDate.now(clock));
     }
 
     @Et("les commandes suivantes:")

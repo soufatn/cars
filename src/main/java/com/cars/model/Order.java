@@ -2,7 +2,6 @@ package com.cars.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity(name = "carOrder")
 public class Order {
@@ -46,6 +45,14 @@ public class Order {
         this.orderDate = orderDate;
     }
 
+    public Order(int id, String email, Car car, int price, LocalDate orderDate) {
+        this.id = id;
+        this.email = email;
+        this.car = car;
+        this.price = price;
+        this.orderDate = orderDate;
+    }
+
     public static Order of(int id, String email, Car car, int price) {
         return new Order(id, email, car, price);
     }
@@ -56,6 +63,10 @@ public class Order {
 
     public static Order of(String email, Car car, int price) {
         return new Order(email, car, price);
+    }
+
+    public static Order of(int id, String email, Car car, int price, LocalDate orderDate) {
+        return new Order(id, email, car, price, orderDate);
     }
 
     public Integer getId() {

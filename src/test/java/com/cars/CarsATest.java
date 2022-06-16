@@ -23,6 +23,14 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
+@Transactional
+@AutoConfigureCache
+@AutoConfigureDataJpa
+@AutoConfigureTestEntityManager
+@SpringBootTest
+@DirtiesContext
+@CucumberContextConfiguration
 public class CarsATest {
 
     @Autowired
