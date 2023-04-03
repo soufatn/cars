@@ -8,6 +8,11 @@
 
 name: Back CI
 
+permissions:
+  id-token: write
+  contents: read
+  checks: write
+
 defaults: 
   run:
     working-directory: back
