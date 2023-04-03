@@ -1,10 +1,12 @@
 package com.cars.controller;
 
 import com.cars.dto.CarDto;
+import com.cars.dto.CreateCarDto;
 import com.cars.dto.DuplicateCarDto;
 import com.cars.dto.UpdatedCarDto;
 import com.cars.model.Car;
 import com.cars.repository.CarRepository;
+import com.cars.service.CarService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,25 +20,28 @@ import java.util.stream.StreamSupport;
 import static com.cars.model.Car.SMALL_CAR_MAX_PRICE;
 
 @RestController()
+@CrossOrigin()
 public class CarController {
 
     private final CarRepository carRepository;
+    private final CarService carService;
 
-    public CarController(CarRepository carRepository) {
+    public CarController(CarRepository carRepository, CarService carService) {
         this.carRepository = carRepository;
+        this.carService = carService;
     }
 
     @GetMapping("/api/car/")
     public List<CarDto> findAll() {
         return StreamSupport.stream(carRepository.findAll().spliterator(), false)
-                .map(car -> new CarDto(car.getName(), car.getCategory()))
+                .map(car -> new CarDto(car.getId(), car.getName(), car.getCategory()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/api/car/{name}")
     public CarDto findByName(@PathVariable("name") String name) {
         return carRepository.findByName(name)
-                .map(car -> new CarDto(car.getName(), car.getCategory()))
+                .map(car -> new CarDto(car.getId(), car.getName(), car.getCategory()))
                 .orElse(null);
     }
 
@@ -67,5 +72,17 @@ public class CarController {
             }
         });
         return new ResponseEntity<>(result.get());
+    }
+
+    @PostMapping("/api/car/")
+    public ResponseEntity<Void> create(@RequestBody CreateCarDto createCarDto) {
+        carService.create(createCarDto.name(), createCarDto.price());
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/api/car/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") int id) {
+        carService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

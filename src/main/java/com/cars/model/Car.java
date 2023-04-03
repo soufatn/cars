@@ -9,7 +9,6 @@ import javax.persistence.Id;
 public class Car {
     public static final int SMALL_CAR_MAX_PRICE = 15000;
     @Id
-    @GeneratedValue
     private Integer id;
 
     @Column
@@ -30,10 +29,15 @@ public class Car {
 
     }
 
-    private Car(String name, int price, String category) {
+    private Car(int id, String name, int price, String category) {
+        this.id = id;
         this.name = name;
         this.price = price;
         this.category = category;
+    }
+
+    private Car(String name, int price, String category) {
+        this(0, name, price, category);
     }
 
     public static Car of(String name, String category) {
@@ -42,6 +46,10 @@ public class Car {
 
     public static Car of(String name, int price, String category) {
         return new Car(name, price, category);
+    }
+
+    public static Car of(int id, String name, int price, String category) {
+        return new Car(id, name, price, category);
     }
 
     public Integer getId() {

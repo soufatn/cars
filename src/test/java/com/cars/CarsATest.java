@@ -43,7 +43,7 @@ public class CarsATest {
 
     @Etantdonné("Les voitures suivantes")
     public void lesVoituresSuivantes(DataTable dataTable) {
-        List<Car> cars = dataTableTransformEntries(dataTable, this::buildCar);
+        List<Car> cars = dataTableTransformEntries(dataTable, CarsATest::buildCar);
 
         for (Car car : cars) {
             var savedCar = entityManager.persist(car);
@@ -51,8 +51,8 @@ public class CarsATest {
         }
     }
 
-    private Car buildCar(Map<String, String> entry) {
-        return Car.of(entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
+    static Car buildCar(Map<String, String> entry) {
+        return Car.of(Integer.parseInt(entry.get("id")), entry.get("name"), Integer.parseInt(entry.get("price")), entry.get("category"));
     }
 
     private Car buildCarInfo(Map<String, String> entry) {
@@ -75,14 +75,11 @@ public class CarsATest {
     public void onRécupèreLesInformationsSuivantesDeLaBase(DataTable dataTable) {
         List<Car> expectedCars = dataTableTransformEntries(dataTable, this::buildCarInfo);
 
-        final Integer carId = findFirstSavedCarId();
+        final Integer carId = carRepository.findAll().iterator().next().getId();
         final Car car = carRepository.findById(carId).get();
         assertThat(car.getName()).isEqualTo(expectedCars.get(0).getName());
         assertThat(car.getPrice()).isEqualTo(expectedCars.get(0).getPrice());
         assertThat(car.getCategory()).isEqualTo(expectedCars.get(0).getCategory());
     }
 
-    private Integer findFirstSavedCarId() {
-        return savedCars.get(0).getId();
-    }
 }
