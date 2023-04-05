@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {MatButtonModule, MatFormFieldModule, MatInputModule} from '@angular/material';
 
 @Component({
   selector: 'app-cars-form',
@@ -11,6 +12,8 @@ export class CarsFormComponent {
 
   constructor(fb: FormBuilder) {
     this.carForm = fb.group({
+      name: '',
+      price: 0
     });
   }
 
