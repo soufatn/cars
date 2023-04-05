@@ -1,1 +1,19 @@
 <p>cars-form works!</p>
+<div class="car-form-container">
+  <form [formGroup]="carForm" (ngSubmit)="createCar()">
+    <mat-form-field>
+      <input matInput placeholder="Name" id="name">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Price" type="number" id="price">
+      <span matPrefix>€&nbsp;</span>
+      <span matSuffix>.00</span>
+    </mat-form-field>
+
+
+    <div class="example-button-row">
+      <button mat-raised-button>Cancel</button>
+      <button mat-raised-button color="primary">Submit</button>
+    </div>
+  </form>
+</div>
