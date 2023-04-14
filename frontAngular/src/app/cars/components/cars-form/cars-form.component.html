@@ -1,19 +1,36 @@
 <p>cars-form works!</p>
 <div class="car-form-container">
-  <form (ngSubmit)="createCar()">
-    <mat-form-field>
-      <input matInput placeholder="Name" id="name">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Price" type="number" id="price">
-      <span matPrefix>€&nbsp;</span>
-      <span matSuffix>.00</span>
-    </mat-form-field>
-
+  <form name="carForm" role="form" (ngSubmit)="createCar()" [formGroup]="carForm">
+    <h2>
+      Créer ou éditer un Car
+    </h2>
+    <div>
+      <mat-form-field>
+        <input matInput placeholder="Name" type="text" id="name" name="name" formControlName="name">
+        <div *ngIf="carForm.get('name')!.invalid && (carForm.get('name')!.dirty || carForm.get('name')!.touched)">
+          <small class="form-text text-danger" *ngIf="carForm.get('name')?.errors?.required">
+            Ce champ est obligatoire.
+          </small>
+        </div>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Price" type="number" id="price" name="price" formControlName="price">
+        <span matPrefix>€&nbsp;</span>
+        <span matSuffix>.00</span>
+        <div *ngIf="carForm.get('price')!.invalid && (carForm.get('price')!.dirty || carForm.get('price')!.touched)">
+          <small class="form-text text-danger" *ngIf="carForm.get('price')?.errors?.required">
+            Ce champ est obligatoire.
+          </small>
+          <small class="form-text text-danger" [hidden]="!carForm.get('price')?.errors?.number">
+            Ce champ doit être un nombre.
+          </small>
+        </div>
+      </mat-form-field>
+    </div>
 
     <div class="example-button-row">
-      <button mat-raised-button>Cancel</button>
-      <button mat-raised-button color="primary">Submit</button>
+      <button mat-raised-button type="button" id="cancel-car">Cancel</button>
+      <button mat-raised-button color="primary" type="submit" id="save-car" [disabled]="carForm.invalid">Submit</button>
     </div>
   </form>
 </div>
